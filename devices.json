@@ -1,0 +1,40 @@
+{
+  "timestamp": "2025-09-20T21:58:20.131832Z",
+  "devices": [
+    {
+      "ip": "192.168.1.1",
+      "hostname": "lan.home",
+      "state": "up"
+    },
+    {
+      "ip": "192.168.1.14",
+      "hostname": "samsung.home",
+      "state": "up"
+    },
+    {
+      "ip": "192.168.1.15",
+      "hostname": "repeteurwifi6-1f10.home",
+      "state": "up"
+    },
+    {
+      "ip": "192.168.1.22",
+      "hostname": "alarme.home",
+      "state": "up"
+    },
+    {
+      "ip": "192.168.1.25",
+      "hostname": "yohann-hp-probook-430-g3.home",
+      "state": "up"
+    },
+    {
+      "ip": "192.168.1.26",
+      "hostname": "a23-de-ynes-1.home",
+      "state": "up"
+    },
+    {
+      "ip": "192.168.1.27",
+      "hostname": "a26-de-cecile-mireille.home",
+      "state": "up"
+    }
+  ]
+}

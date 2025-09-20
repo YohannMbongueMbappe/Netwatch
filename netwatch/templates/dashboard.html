@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8"/>
+  <title>NetWatch – Monitoring réseau</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <style>
+    body{font-family:system-ui,Arial,sans-serif;max-width:900px;margin:2rem auto;padding:0 1rem}
+    header{display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem}
+    button{padding:.6rem 1rem;border:1px solid #ddd;border-radius:.5rem;cursor:pointer}
+    .muted{color:#666}
+    ul{list-style:none;padding:0}
+    li{padding:.5rem 0;border-bottom:1px solid #eee;display:flex;justify-content:space-between;align-items:center}
+    .pill{font-size:.75rem;border:1px solid #ddd;border-radius:999px;padding:.1rem .5rem;margin-left:.5rem}
+    .up{background:#e9f9e9;border-color:#bde5bd}
+    .down{background:#fff3e0;border-color:#ffd59a}
+    #alert{margin:.8rem 0;color:#b54708;background:#fff7ed;border:1px solid #ffedd5;padding:.5rem;border-radius:.5rem;display:none}
+  </style>
+</head>
+<body>
+  <header>
+    <h1>NetWatch</h1>
+    <button id="scanBtn">Scanner maintenant</button>
+  </header>
+
+  <p class="muted">Dernier scan : <span id="ts">—</span></p>
+  <div id="alert"></div>
+  <h2>Appareils détectés</h2>
+  <ul id="list"></ul>
+
+  <script>
+    async function j(url,opt){const r=await fetch(url,opt);if(!r.ok)throw new Error('HTTP '+r.status);return r.json()}
+    function render(s){
+      document.getElementById('ts').textContent=s.timestamp||'—';
+      const ul=document.getElementById('list'); ul.innerHTML='';
+      (s.devices||[]).forEach(d=>{
+        const li=document.createElement('li');
+        const left=document.createElement('div');
+        left.textContent=d.ip+(d.hostname?` (${d.hostname})`:'');
+        const pill=document.createElement('span');
+        pill.className='pill '+(d.state==='up'?'up':'down'); pill.textContent=d.state;
+        li.append(left,pill); ul.append(li);
+      });
+    }
+    async function loadLast(){ render(await j('/api/last')); }
+    document.getElementById('scanBtn').onclick = async ()=>{
+      const b=document.getElementById('scanBtn'), a=document.getElementById('alert');
+      b.disabled=true; b.textContent='Scan en cours…';
+      try{
+        const res=await j('/api/scan',{method:'POST'});
+        render(res.data);
+        if(res.new_ips && res.new_ips.length){ a.style.display='block'; a.textContent='⚠️ Nouveaux appareils : '+res.new_ips.join(', '); }
+        else{ a.style.display='none'; a.textContent=''; }
+      }catch(e){ a.style.display='block'; a.textContent='Erreur : '+e.message; }
+      finally{ b.disabled=false; b.textContent='Scanner maintenant'; }
+    };
+    loadLast();
+  </script>
+</body>
+</html>
